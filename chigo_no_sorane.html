@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>児のそら寝 — 古文自習教材</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --ink-light: #3d2e1a;
+    --paper: #f5f0e8;
+    --paper-dark: #e8e0cc;
+    --paper-mid: #ede5d4;
+    --vermilion: #c0392b;
+    --gold: #b5860d;
+    --gold-light: #d4a017;
+    --sage: #4a6741;
+    --sage-light: #6a8f60;
+    --sage-pale: #e8f0e5;
+    --indigo: #2c3e6b;
+    --indigo-light: #3d5491;
+    --shadow: rgba(26,18,8,0.15);
+    --shadow-deep: rgba(26,18,8,0.3);
+    --nb: #2a1f0e;
+    --na: #d4a017;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(180,160,120,0.04) 40px, rgba(180,160,120,0.04) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(180,160,120,0.04) 40px, rgba(180,160,120,0.04) 41px);
+    pointer-events: none; z-index: 0;
+  }
+
+  header {
+    background: var(--ink); color: var(--paper);
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 10;
+    box-shadow: 0 2px 12px var(--shadow-deep);
+  }
+  header::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--vermilion), var(--gold), var(--vermilion));
+  }
+  .h-title { font-family: 'Noto Serif JP', serif; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.15em; }
+  .h-sub { font-size: 0.72rem; opacity: 0.55; letter-spacing: 0.1em; margin-top: 2px; }
+  .h-badge { background: var(--vermilion); color: white; font-size: 0.68rem; padding: 4px 10px; border-radius: 20px; }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 1.8rem 1.5rem; position: relative; z-index: 1; }
+
+  /* APIキーバナー */
+  .key-banner {
+    background: #fff8e6; border: 1.5px solid var(--gold);
+    border-radius: 12px; padding: 1rem 1.3rem;
+    margin-bottom: 1.4rem;
+    display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;
+  }
+  .key-banner.hidden { display: none; }
+  .key-body { flex: 1; }
+  .key-title { font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+  .key-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .key-input {
+    flex: 1; min-width: 200px;
+    border: 1px solid var(--paper-dark); border-radius: 8px;
+    padding: 7px 12px; font-size: 0.82rem; font-family: monospace;
+    background: white; color: var(--ink); outline: none;
+  }
+  .key-input:focus { border-color: var(--gold); }
+  .key-btn {
+    background: var(--gold); color: white; border: none;
+    border-radius: 8px; padding: 7px 18px;
+    font-size: 0.82rem; font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer; white-space: nowrap;
+  }
+  .key-btn:hover { opacity: 0.85; }
+  .key-note { font-size: 0.71rem; color: rgba(26,18,8,0.5); line-height: 1.6; }
+  .key-note a { color: var(--gold); }
+
+  /* 使い方 */
+  .howto {
+    background: var(--indigo); color: white;
+    border-radius: 12px; padding: 0.9rem 1.3rem;
+    margin-bottom: 1.4rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+    font-size: 0.8rem; line-height: 1.7; flex-wrap: wrap;
+  }
+  .steps { display: flex; gap: 0.6rem; margin-top: 6px; flex-wrap: wrap; }
+  .step { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 4px 10px; font-size: 0.73rem; }
+  .snum { width: 17px; height: 17px; background: var(--vermilion); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 700; flex-shrink: 0; }
+
+  /* 動画 */
+  .vid-section { background: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px var(--shadow-deep); margin-bottom: 1.4rem; }
+  .vid-bar { background: rgba(255,255,255,0.06); padding: 0.75rem 1.3rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .vdot { width: 10px; height: 10px; border-radius: 50%; }
+  .vtab { flex: 1; padding: 0.6rem 0.5rem; background: none; border: none; color: rgba(255,255,255,0.4); font-family: 'Noto Sans JP', sans-serif; font-size: 0.75rem; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; letter-spacing: 0.03em; }
+  .vtab:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+  .vtab.on { color: var(--na); border-bottom-color: var(--na); background: rgba(212,160,23,0.08); }
+  .vid-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #0a0a0a; }
+  #main-video { width: 100%; height: 100%; display: block; }
+
+  .overlay {
+    position: absolute; inset: 0;
+    background: rgba(8,6,2,0.88);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(6px); z-index: 5;
+  }
+  .overlay.on { opacity: 1; pointer-events: all; }
+  .ov-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--nb); border: 3px solid var(--na);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; margin-bottom: 1rem;
+    animation: pgold 1.8s ease-out infinite;
+  }
+  @keyframes pgold { 0%{box-shadow:0 0 0 0 rgba(212,160,23,0.6)} 70%{box-shadow:0 0 0 18px rgba(212,160,23,0)} 100%{box-shadow:0 0 0 0 rgba(212,160,23,0)} }
+  .ov-title { color: var(--na); font-family: 'Noto Serif JP', serif; font-size: 1.1rem; margin-bottom: 0.4rem; letter-spacing: 0.08em; }
+  .ov-sub { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+
+  .vid-ctrl { padding: 0.75rem 1.3rem; display: flex; align-items: center; gap: 0.9rem; background: rgba(255,255,255,0.04); }
+  .cbtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 8px; padding: 5px 14px; font-size: 0.76rem; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background 0.2s; }
+  .cbtn:hover { background: rgba(255,255,255,0.18); }
+  .prog-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; }
+  .prog-fill { height: 100%; background: var(--vermilion); border-radius: 4px; width: 0%; transition: width 0.5s linear; }
+  .tdisp { color: rgba(255,255,255,0.45); font-size: 0.7rem; font-family: monospace; min-width: 90px; }
+  .mic-s { display: flex; align-items: center; gap: 5px; margin-left: auto; color: rgba(255,255,255,0.5); font-size: 0.73rem; }
+  .mdot { width: 7px; height: 7px; border-radius: 50%; background: #555; transition: background 0.3s; }
+  .mdot.on { background: #2ecc71; animation: blink 1s infinite; }
+  .mdot.hit { background: var(--na); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* チャット */
+  .chat { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); margin-bottom: 1.4rem; }
+
+  .chat-head { background: var(--nb); padding: 0.85rem 1.3rem; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--na); }
+  .nav { width: 42px; height: 42px; border-radius: 50%; background: rgba(212,160,23,0.12); border: 2px solid var(--na); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+  .ninfo { flex: 1; }
+  .nname { font-family: 'Noto Serif JP', serif; font-size: 0.95rem; color: var(--na); font-weight: 500; letter-spacing: 0.06em; }
+  .nrole { font-size: 0.67rem; color: rgba(255,255,255,0.38); margin-top: 1px; }
+  .cstatus { font-size: 0.64rem; padding: 3px 9px; border-radius: 10px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.42); transition: all 0.3s; }
+  .cstatus.on { background: rgba(212,160,23,0.2); color: var(--na); }
+
+  .msgs { padding: 1.2rem; min-height: 220px; max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; background: var(--paper-mid); scroll-behavior: smooth; }
+  .empty { color: rgba(26,18,8,0.3); font-size: 0.82rem; text-align: center; margin: auto; font-family: 'Noto Serif JP', serif; letter-spacing: 0.08em; line-height: 2.2; }
+
+  .msg { display: flex; gap: 10px; align-items: flex-start; animation: fup 0.3s ease; }
+  .msg.user { flex-direction: row-reverse; }
+  @keyframes fup { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .mav { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .msg.narrator .mav { background: var(--nb); border: 2px solid var(--na); font-size: 1.1rem; }
+  .msg.user .mav { background: var(--indigo); color: white; font-size: 0.75rem; }
+  .mbody { max-width: 78%; }
+  .mlabel { font-size: 0.62rem; color: rgba(26,18,8,0.38); margin-bottom: 4px; }
+  .msg.user .mlabel { text-align: right; }
+  .mbubble { padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.86rem; line-height: 1.82; }
+  .msg.narrator .mbubble { background: white; border: 1px solid var(--paper-dark); border-top-left-radius: 4px; border-left: 3px solid var(--na); color: var(--ink); }
+  .msg.user .mbubble { background: var(--indigo); color: white; border-top-right-radius: 4px; }
+
+  .tdots { display: flex; gap: 4px; align-items: center; padding: 3px 0; }
+  .td { width: 6px; height: 6px; border-radius: 50%; background: var(--na); animation: tdot 1.2s ease-in-out infinite; }
+  .td:nth-child(2){animation-delay:0.2s} .td:nth-child(3){animation-delay:0.4s}
+  @keyframes tdot { 0%,80%,100%{transform:translateY(0);opacity:0.4} 40%{transform:translateY(-5px);opacity:1} }
+
+  .inp-area { padding: 0.85rem 1.1rem; background: var(--paper); border-top: 1px solid var(--paper-dark); display: flex; gap: 7px; align-items: flex-end; }
+  .micbtn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--paper-dark); background: var(--paper-mid); color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+  .micbtn:hover { background: var(--paper-dark); }
+  .micbtn.rec { background: var(--vermilion); color: white; border-color: var(--vermilion); }
+  .micbtn svg { width: 15px; height: 15px; }
+  .cinput { flex: 1; border: 1px solid var(--paper-dark); border-radius: 10px; padding: 8px 12px; font-family: 'Noto Sans JP', sans-serif; font-size: 0.84rem; background: var(--paper-mid); color: var(--ink); resize: none; outline: none; min-height: 36px; max-height: 100px; transition: border-color 0.2s; }
+  .cinput:focus { border-color: var(--na); }
+  .cinput::placeholder { color: rgba(26,18,8,0.32); }
+  .sbtn { background: var(--nb); color: var(--na); border: 1px solid var(--na); border-radius: 10px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .sbtn:hover { background: var(--na); color: white; }
+  .sbtn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .sbtn svg { width: 15px; height: 15px; }
+  .rbtn { background: var(--sage); color: white; border: none; border-radius: 10px; padding: 7px 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 0.78rem; cursor: pointer; display: none; align-items: center; gap: 5px; transition: background 0.2s; white-space: nowrap; }
+  .rbtn:hover { background: var(--sage-light); }
+  .rbtn.show { display: flex; }
+
+  .cnote { background: var(--sage-pale); border: 1px solid var(--sage); border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.78rem; color: var(--sage); display: none; align-items: center; gap: 7px; margin: 0 1.1rem 0.9rem; }
+  .cnote.show { display: flex; }
+
+  /* タブ */
+  .tabs { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); }
+  .tabnav { display: flex; border-bottom: 1px solid var(--paper-dark); background: var(--paper-mid); }
+  .tbtn { flex: 1; padding: 0.75rem; background: none; border: none; font-family: 'Noto Sans JP', sans-serif; font-size: 0.78rem; color: rgba(26,18,8,0.5); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tbtn.on { color: var(--vermilion); border-bottom-color: var(--vermilion); background: var(--paper); font-weight: 500; }
+  .tc { display: none; padding: 1.3rem; }
+  .tc.on { display: block; }
+
+  .honbun { font-family: 'Noto Serif JP', serif; font-size: 1.02rem; line-height: 2.5; color: var(--ink); border-left: 3px solid var(--vermilion); padding-left: 1.2rem; margin-bottom: 1rem; }
+  .honbun ruby rt { font-size: 0.52em; color: var(--vermilion); }
+
+  .wtbl { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .wtbl th { background: var(--ink); color: var(--paper); padding: 7px 11px; text-align: left; font-weight: 400; font-size: 0.75rem; }
+  .wtbl td { padding: 8px 11px; border-bottom: 1px solid var(--paper-dark); vertical-align: top; }
+  .wtbl tr:nth-child(even) td { background: var(--paper-mid); }
+  .wa { font-family: 'Noto Serif JP', serif; }
+  .wt { font-size: 0.7rem; background: var(--paper-dark); padding: 2px 6px; border-radius: 8px; }
+  .wm { color: var(--indigo); }
+
+  .sh { font-family: 'Noto Serif JP', serif; font-size: 0.88rem; font-weight: 500; color: var(--vermilion); margin-bottom: 0.55rem; letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px; }
+  .sh::after { content:''; flex:1; height:1px; background: var(--paper-dark); }
+  .sb { font-size: 0.83rem; line-height: 1.95; color: var(--ink-light); margin-bottom: 1.3rem; }
+
+  /* フローティング */
+  .sind {
+    position: fixed; bottom: 1.8rem; right: 1.8rem;
+    background: var(--nb); border: 1px solid var(--na); color: var(--na);
+    border-radius: 50px; padding: 9px 16px; font-size: 0.75rem;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px var(--shadow-deep);
+    z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .sind.on { opacity: 1; }
+  .wave { display: flex; gap: 2px; align-items: flex-end; height: 14px; }
+  .wb { width: 3px; background: var(--na); border-radius: 2px; animation: wp 0.8s ease-in-out infinite; }
+  .wb:nth-child(2){animation-delay:0.1s;height:7px} .wb:nth-child(3){animation-delay:0.2s;height:11px}
+  .wb:nth-child(4){animation-delay:0.3s;height:5px} .wb:nth-child(5){animation-delay:0.15s;height:9px}
+  @keyframes wp { 0%,100%{transform:scaleY(0.5);opacity:0.5} 50%{transform:scaleY(1);opacity:1} }
+
+  .toast { position: fixed; top: 5rem; left: 50%; transform: translateX(-50%) translateY(-16px); background: var(--ink); color: var(--paper); padding: 9px 20px; border-radius: 50px; font-size: 0.78rem; z-index: 200; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 600px) {
+    .main { padding: 1rem; }
+    header { padding: 0.85rem 1rem; }
+    .h-title { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="h-title">児のそら寝</div>
+    <div class="h-sub">宇治拾遺物語 ／ 高校１年 古文</div>
+  </div>
+  <div class="h-badge">ナレーターAI</div>
+</header>
+
+<div class="main">
+
+  <!-- APIキー設定 -->
+  <div class="key-banner" id="keyBanner">
+    <span style="font-size:1.3rem;margin-top:2px;">🔑</span>
+    <div class="key-body">
+      <div class="key-title">【先生向け設定】Gemini APIキーを入力すると、生徒がナレーターと会話できるようになります</div>
+      <div class="key-row">
+        <input class="key-input" type="password" id="keyInput" placeholder="AIzaSy..." autocomplete="off">
+        <button class="key-btn" onclick="saveKey()">設定する</button>
+      </div>
+      <div class="key-note">
+        ※ APIキーは無料で取得できます →
+        <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>
+        にGoogleアカウントでログイン →「APIキーを作成」をクリック。
+        キーはこのブラウザ（localStorage）にのみ保存され、外部には送信されません。
+        生徒は設定不要で、先生が一度設定した端末でそのまま使えます。
+      </div>
+    </div>
+  </div>
+
+  <!-- 使い方 -->
+  <div class="howto">
+    <span style="font-size:1.4rem;flex-shrink:0;">🎙️</span>
+    <div>
+      <div style="font-weight:500;margin-bottom:5px;">動画のナレーターに「先生、質問です」と話しかけると、動画が止まってナレーターと直接会話できます</div>
+      <div class="steps">
+        <div class="step"><div class="snum">1</div>動画を再生する</div>
+        <div class="step"><div class="snum">2</div>「先生、質問です」と話す</div>
+        <div class="step"><div class="snum">3</div>動画が止まりナレーターと会話</div>
+        <div class="step"><div class="snum">4</div>「動画を再開」で続きへ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 動画 -->
+  <div class="vid-section">
+    <div class="vid-bar">
+      <div class="vdot" style="background:#ff5f57;"></div>
+      <div class="vdot" style="background:#febc2e;"></div>
+      <div class="vdot" style="background:#28c840;"></div>
+      <span style="color:rgba(255,255,255,0.45);font-size:0.76rem;margin-left:6px;">児のそら寝 — 動画を選んで視聴</span>
+    </div>
+
+    <!-- 動画選択タブ -->
+    <div style="display:flex;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.08);">
+      <button class="vtab on" id="vtab0" onclick="switchVideo(0)">📖 原文音読</button>
+      <button class="vtab" id="vtab1" onclick="switchVideo(1)">🏮 現代語の物語</button>
+      <button class="vtab" id="vtab2" onclick="switchVideo(2)">🔄 交互再生</button>
+    </div>
+
+    <div class="vid-wrap">
+      <iframe
+        id="main-video"
+        src="https://www.youtube.com/embed/EhfdgmD3c8c?enablejsapi=1&rel=0&modestbranding=1"
+        title="児のそら寝 原文音読"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="width:100%;height:100%;"
+      ></iframe>
+      <div class="overlay" id="overlay">
+        <div class="ov-avatar">📜</div>
+        <div class="ov-title">ナレーターが応答します</div>
+        <div class="ov-sub">動画を一時停止しました。下のチャットで質問してください</div>
+      </div>
+    </div>
+    <div class="vid-ctrl">
+      <button class="cbtn" id="playBtn" onclick="togglePlay()">▶ 再生</button>
+      <div class="prog-wrap" onclick="seekVid(event)">
+        <div class="prog-fill" id="pFill"></div>
+      </div>
+      <div class="tdisp" id="tDisp">0:00 / 0:00</div>
+      <div class="mic-s">
+        <div class="mdot" id="mDot"></div>
+        <span id="mTxt">マイク待機中</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- チャット -->
+  <div class="chat">
+    <div class="chat-head">
+      <div class="nav">📜</div>
+      <div class="ninfo">
+        <div class="nname">古文ナレーター</div>
+        <div class="nrole">「児のそら寝」解説動画の語り手 — 何でも聞いてください</div>
+      </div>
+      <div class="cstatus" id="cStatus">待機中</div>
+    </div>
+
+    <div class="msgs" id="msgs">
+      <div class="empty" id="empty">
+        「先生、質問です」と話しかけると<br>ナレーターが答えてくれます
+      </div>
+    </div>
+
+    <div class="cnote" id="cNote">✅ 会話が一段落しました。「動画を再開」ボタンで続きを見てみましょう！</div>
+
+    <div class="inp-area">
+      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="マイクで話す">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+      </button>
+      <textarea
+        class="cinput" id="cInput"
+        placeholder="質問を入力…（例：「念じて」ってどういう意味ですか？）"
+        rows="1"
+        onkeydown="onKey(event)"
+        oninput="autoH(this)"
+      ></textarea>
+      <button class="sbtn" id="sBtn" onclick="send()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+      <button class="rbtn" id="rBtn" onclick="resume()">▶ 動画を再開</button>
+    </div>
+  </div>
+
+  <!-- 参考タブ -->
+  <div class="tabs">
+    <div class="tabnav">
+      <button class="tbtn on" onclick="tab('honbun',this)">📜 本文</button>
+      <button class="tbtn" onclick="tab('vocab',this)">📖 語句</button>
+      <button class="tbtn" onclick="tab('story',this)">🏮 あらすじ</button>
+      <button class="tbtn" onclick="tab('point',this)">✏️ 学習ポイント</button>
+    </div>
+
+    <div class="tc on" id="tc-honbun">
+      <div class="honbun">
+        今は昔、比叡の山に<ruby>児<rt>ちご</rt></ruby>ありけり。<ruby>僧<rt>そう</rt></ruby>たち、<ruby>宵<rt>よい</rt></ruby>のつれづれに、「いざ、<ruby>掻餅<rt>かいもちひ</rt></ruby>せん」といひけるを、この<ruby>児<rt>ちご</rt></ruby>、心よせに聞きけり。<br><br>
+        さりとて、しいださんを待ちて<ruby>寝<rt>ね</rt></ruby>ざらんも、わろかりなんと思ひて、<ruby>片方<rt>かたかた</rt></ruby>に寄りて、<ruby>寝<rt>ね</rt></ruby>たるよしにて、出で来るを待ちけるに、すでにしいだしたるさまにて、ひしめき<ruby>会<rt>あ</rt></ruby>ひたり。この<ruby>児<rt>ちご</rt></ruby>、定めて<ruby>驚<rt>おどろ</rt></ruby>かさんずらんと、待ち<ruby>居<rt>ゐ</rt></ruby>たるに、<ruby>僧<rt>そう</rt></ruby>の、「もの申しさぶらはむ。<ruby>驚<rt>おどろ</rt></ruby>かせたまへ。」と言ふを、うれしとは思へども、ただ一度にいらへんも、待ちけるかともぞ思ふとて、今一声呼ばれていらへんと、<ruby>念<rt>ねん</rt></ruby>じて寝たるほどに、「や、な起こしたてまつりそ。<ruby>幼<rt>をさな</rt></ruby>き人は<ruby>寝<rt>ね</rt></ruby>入りたまひにけり」と言ふ声のしければ、あなわびしと思ひて、今一度起こせかしと思ひ<ruby>寝<rt>ね</rt></ruby>に聞けば、ひしひしとただ食ひに食ふ音のしければ、すべなくて、<ruby>無期<rt>むご</rt></ruby>の後に、「えい。」といらへたりければ、僧たち笑ふことかぎりなし。
+      </div>
+      <div style="font-size:0.74rem;color:rgba(26,18,8,0.38);padding-left:1.2rem;">※ 宇治拾遺物語 第一巻 第十二話</div>
+    </div>
+
+    <div class="tc" id="tc-vocab">
+      <table class="wtbl">
+        <thead><tr><th>語句</th><th>品詞</th><th>現代語訳・意味</th></tr></thead>
+        <tbody>
+          <tr><td><span class="wa">児（ちご）</span></td><td><span class="wt">名詞</span></td><td class="wm">寺に預けられた貴族の子ども</td></tr>
+          <tr><td><span class="wa">いざ</span></td><td><span class="wt">感動詞</span></td><td class="wm">さあ（誘いかけ）</td></tr>
+          <tr><td><span class="wa">掻餅（かいもち）</span></td><td><span class="wt">名詞</span></td><td class="wm">ぼたもち・おはぎ</td></tr>
+          <tr><td><span class="wa">心よせに</span></td><td><span class="wt">副詞的</span></td><td class="wm">興味を持って、心引かれながら</td></tr>
+          <tr><td><span class="wa">わろかりなん</span></td><td><span class="wt">形容詞＋推量</span></td><td class="wm">みっともないだろう</td></tr>
+          <tr><td><span class="wa">寝たるよしにて</span></td><td><span class="wt">連語</span></td><td class="wm">寝たふりをして</td></tr>
+          <tr><td><span class="wa">定めて</span></td><td><span class="wt">副詞</span></td><td class="wm">きっと・必ず</td></tr>
+          <tr><td><span class="wa">驚かさんずらん</span></td><td><span class="wt">推量</span></td><td class="wm">起こしてくれるだろう</td></tr>
+          <tr><td><span class="wa">念じて</span></td><td><span class="wt">動詞（サ変）</span></td><td class="wm">がまんして</td></tr>
+          <tr><td><span class="wa">いらへん</span></td><td><span class="wt">動詞＋意志</span></td><td class="wm">返事をしよう</td></tr>
+          <tr><td><span class="wa">な〜そ</span></td><td><span class="wt">禁止構文</span></td><td class="wm">〜するな</td></tr>
+          <tr><td><span class="wa">あなわびし</span></td><td><span class="wt">感動詞＋形容詞</span></td><td class="wm">ああ、つらい・残念だ</td></tr>
+          <tr><td><span class="wa">思ひ寝に聞けば</span></td><td><span class="wt">連語</span></td><td class="wm">寝たふりをしながら聞いていると</td></tr>
+          <tr><td><span class="wa">ひしめき食ひにけり</span></td><td><span class="wt">動詞＋完了</span></td><td class="wm">わいわいと食べてしまった</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tc" id="tc-story">
+      <div class="sh">登場人物</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;">
+        <span style="display:inline-flex;align-items:center;gap:8px;background:var(--paper-mid);border:1px solid var(--paper-dark);border-radius:10px;padding:6px 12px;">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--indigo);color:white;display:flex;align-items:center;justify-content:center;font-size:0.72rem;flex-shrink:0;">児</span>
+          <span style="font-size:0.8rem;"><b>児（ちご）</b><br><span style="font-size:0.7rem;color:rgba(26,18,8,0.5);">主人公・おはぎが食べたい</span></span>
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:8px;background:var(--paper-mid);border:1px solid var(--paper-dark);border-radius:10px;padding:6px 12px;">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--sage);color:white;display:flex;align-items:center;justify-content:center;font-size:0.72rem;flex-shrink:0;">僧</span>
+          <span style="font-size:0.8rem;"><b>僧たち</b><br><span style="font-size:0.7rem;color:rgba(26,18,8,0.5);">比叡山の僧・おはぎを作る</span></span>
+        </span>
+      </div>
+      <div class="sh">あらすじ</div>
+      <div class="sb">
+        比叡山のお寺に預けられた貴族の子ども（児）が、ある夜、僧たちが「おはぎを作ろう」と話しているのを興味津々で聞いていた。<br><br>
+        「すぐ起きたら品がない」と思い、寝たふりをして呼ばれるのを待ったが、「もう一度呼ばれたら返事しよう」とがまんしているうちに、「起こすな、寝てしまった」と言われ、自分だけ食べられなかったという滑稽な話。
+      </div>
+      <div class="sh">テーマ・教訓</div>
+      <div class="sb">「見栄を張りすぎると損をする」というユーモラスな教訓。本音と見栄の葛藤がこの物語の面白さの核心です。</div>
+    </div>
+
+    <div class="tc" id="tc-point">
+      <div class="sh">文法チェックポイント</div>
+      <div class="sb">
+        <b style="color:var(--vermilion);">① 推量「ずらん」</b><br>
+        「驚かさんずらんと」→「きっと起こしてくれるだろうと」。「む（ん）＋ずらん」の形。<br><br>
+        <b style="color:var(--vermilion);">② 禁止「な〜そ」</b><br>
+        「な起こしたてまつりそ」→「起こし申すな」。「な＋動詞連用形＋そ」の重要構文。<br><br>
+        <b style="color:var(--vermilion);">③ 完了「にけり」</b><br>
+        「ひしめき食ひにけり」→「わいわい食べてしまった」。「に（完了）＋けり（詠嘆）」。<br><br>
+        <b style="color:var(--vermilion);">④ 謙譲語「たてまつり」</b><br>
+        「起こしたてまつりそ」の「たてまつり」は謙譲語。僧が児に敬意を払っている表現。
+      </div>
+      <div class="sh">入試頻出ポイント</div>
+      <div class="sb">
+        ● 「そら寝」とは → 寝たふり（仮寝）<br>
+        ● 児が返事をしなかった理由 → もう一度呼ばれたら答えようとがまんしていたから<br>
+        ● 「あなわびし」の意味 → ああ残念だ・つらい（感嘆詞＋形容詞）<br>
+        ● この話の主題 → 体裁を気にしすぎて損をした滑稽な話
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 音声インジケーター -->
+<div class="sind" id="sind">
+  <div class="wave">
+    <div class="wb" style="height:5px;"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb" style="height:7px;"></div>
+  </div>
+  <span id="sindTxt">音声認識中…</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== APIキー管理 =====
+const KEY_ID = 'chigo_gemini_key';
+function loadKey() {
+  const k = localStorage.getItem(KEY_ID);
+  if (k) document.getElementById('keyBanner').classList.add('hidden');
+  return k;
+}
+function saveKey() {
+  const v = document.getElementById('keyInput').value.trim();
+  if (!v || !v.startsWith('AIza')) { toast('正しいAPIキーを入力してください（AIzaで始まります）'); return; }
+  localStorage.setItem(KEY_ID, v);
+  document.getElementById('keyBanner').classList.add('hidden');
+  toast('✅ APIキーを保存しました');
+}
+let GKEY = loadKey();
+
+// ===== 状態 =====
+const S = {
+  playing: false, interrupted: false,
+  listening: false, chatActive: false, typing: false,
+  history: [],   // Gemini形式: [{role:'user'|'model', parts:[{text}]}]
+  uCount: 0,
+  rec: null, manualRec: null, manualOn: false
+};
+
+// システムプロンプト（ナレーターキャラクター）
+const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解説動画のナレーターです。
+今、動画を視聴中の高校1年生が動画を止めて質問してきました。
+
+【キャラクター設定】
+- この動画の中で語り続けてきたナレーター本人として話す
+- 「先ほど動画でお話しした〜」「今ちょうど説明していたところですが〜」のように、動画の続きとして自然につながる口調にする
+- 古典文学に精通した、落ち着いた語り口
+- 生徒に寄り添う、優しく親しみやすい先生のような雰囲気
+- 語尾は「〜ですよ」「〜ですね」「〜ましょう」など丁寧に
+- 絵文字は📜🏮📖を1〜2個まで使ってよい
+
+【答えられる内容】
+本文の現代語訳・語句の意味・文法（助動詞・敬語・活用）・登場人物の心情・あらすじ・主題・入試頻出ポイント
+
+【本文の内容（参照用）】
+今は昔、比叡の山に児ありけり。僧たちが「掻餅（おはぎ）を作ろう」と言うのを聞き食べたいと思ったが「すぐ起きたら品がない」と寝たふりをした。「やや」と起こされかけたが「もう一度呼ばれたら返事しよう」とがまんしているうちに「起こすな、寝てしまった」と言われ、自分だけ食べられなかった滑稽な話。
+
+【返答ルール】
+- 200〜350字程度で答える
+- 難しい文法用語は平易な言葉でも補足する
+- 3往復以上したら「他に気になることはありますか？なければ動画の続きを見てみましょう」と促す`;
+
+// ===== 動画切り替え =====
+const VIDEO_IDS = [
+  'EhfdgmD3c8c', // 原文音読
+  'Vpe9I7vVX58', // 現代語の物語
+  'OFlsK0UOY_Y'  // 交互再生
+];
+const VIDEO_TITLES = ['原文音読', '現代語の物語', '原文と現代語の交互再生'];
+
+function switchVideo(idx) {
+  // タブ切り替え
+  document.querySelectorAll('.vtab').forEach((t,i) => t.classList.toggle('on', i===idx));
+  // iframeのsrcを差し替え
+  const iframe = document.getElementById('main-video');
+  iframe.src = `https://www.youtube.com/embed/${VIDEO_IDS[idx]}?enablejsapi=1&rel=0&modestbranding=1`;
+  // YouTube APIのプレーヤーを再初期化
+  yt = null;
+  S.playing = false;
+  document.getElementById('playBtn').textContent = '▶ 再生';
+  document.getElementById('pFill').style.width = '0%';
+  document.getElementById('tDisp').textContent = '0:00 / 0:00';
+  // iframeロード後にAPIを再アタッチ
+  iframe.onload = () => {
+    setTimeout(() => {
+      yt = new YT.Player('main-video', {
+        events: {
+          onReady: () => toast(`「${VIDEO_TITLES[idx]}」の準備ができました`),
+          onStateChange: e => {
+            S.playing = e.data === YT.PlayerState.PLAYING;
+            document.getElementById('playBtn').textContent = S.playing ? '⏸ 一時停止' : '▶ 再生';
+            if (S.playing) rafP();
+          }
+        }
+      });
+    }, 800);
+  };
+  toast(`「${VIDEO_TITLES[idx]}」に切り替えました`);
+}
+
+// ===== YouTube API =====
+let yt = null;
+window.onYouTubeIframeAPIReady = () => {
+  yt = new YT.Player('main-video', {
+    events: {
+      onReady: () => { toast('動画の準備ができました'); startListen(); },
+      onStateChange: e => {
+        S.playing = e.data === YT.PlayerState.PLAYING;
+        document.getElementById('playBtn').textContent = S.playing ? '⏸ 一時停止' : '▶ 再生';
+        if (S.playing) rafP();
+      }
+    }
+  });
+};
+function togglePlay() { if (!yt) return; S.playing ? yt.pauseVideo() : yt.playVideo(); }
+function seekVid(e) { if (!yt) return; yt.seekTo((e.offsetX / e.currentTarget.offsetWidth) * yt.getDuration(), true); }
+function rafP() {
+  if (!yt || !S.playing) return;
+  try {
+    const c = yt.getCurrentTime(), d = yt.getDuration();
+    document.getElementById('pFill').style.width = (c/d*100) + '%';
+    const f = t => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+    document.getElementById('tDisp').textContent = `${f(c)} / ${f(d)}`;
+  } catch(e) {}
+  if (S.playing) requestAnimationFrame(rafP);
+}
+
+// ===== 音声認識（ウェイクワード） =====
+function startListen() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { setMic('off','非対応ブラウザ'); return; }
+  S.rec = new SR();
+  S.rec.lang = 'ja-JP'; S.rec.continuous = true; S.rec.interimResults = true;
+  S.rec.onstart = () => { S.listening = true; setMic('on','音声検知中'); showInd('「先生、質問です」と話しかけてください', 3200); };
+  S.rec.onresult = e => {
+    let t = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+    const kws = ['先生、質問','先生質問','先生しつもん','せんせい質問','AI先生','えーあい先生'];
+    if (kws.some(w => t.includes(w)) && !S.interrupted) doInterrupt();
+  };
+  S.rec.onerror = e => { if (e.error !== 'aborted') setTimeout(startListen, 2000); };
+  S.rec.onend = () => { if (S.listening && !S.interrupted) setTimeout(startListen, 600); };
+  try { S.rec.start(); } catch(e) { setTimeout(startListen, 1000); }
+}
+function setMic(type, txt) {
+  const d = document.getElementById('mDot');
+  d.className = 'mdot' + (type==='on' ? ' on' : type==='hit' ? ' hit' : '');
+  document.getElementById('mTxt').textContent = txt;
+}
+function showInd(txt, hide=0) {
+  document.getElementById('sindTxt').textContent = txt;
+  document.getElementById('sind').classList.add('on');
+  if (hide) setTimeout(() => document.getElementById('sind').classList.remove('on'), hide);
+}
+
+// ===== 割り込み処理 =====
+function doInterrupt() {
+  S.interrupted = true;
+  setMic('hit','質問を検知！');
+  showInd('ナレーターが応答します…');
+  if (yt && S.playing) {
+    const c = yt.getCurrentTime();
+    yt.seekTo(Math.max(0, c - 3), true);
+    setTimeout(() => yt.pauseVideo(), 300);
+  }
+  const ov = document.getElementById('overlay');
+  ov.classList.add('on');
+  setTimeout(() => ov.classList.remove('on'), 2800);
+  activateChat();
+  const ops = [
+    'はい、呼びましたね。今ちょうど大事な場面をご覧いただいていたところです。何でも聞いてください📜',
+    'おや、動画を止めましたね。わからないことがあれば遠慮なくどうぞ。丁寧に説明しますよ🏮',
+    '先ほど動画でご説明した内容について気になりましたか？何でも答えますよ📖'
+  ];
+  addMsg('model', ops[Math.floor(Math.random()*3)]);
+  document.getElementById('rBtn').classList.add('show');
+  document.getElementById('cInput').focus();
+}
+function activateChat() {
+  S.chatActive = true;
+  document.getElementById('empty').style.display = 'none';
+  const s = document.getElementById('cStatus');
+  s.textContent = '会話中'; s.classList.add('on');
+  toast('ナレーターが応答します');
+}
+
+// ===== チャット =====
+function addMsg(role, text) {
+  const box = document.getElementById('msgs');
+  document.getElementById('empty').style.display = 'none';
+  const div = document.createElement('div');
+  const isN = role === 'model';
+  div.className = `msg ${isN ? 'narrator' : 'user'}`;
+  div.innerHTML = `
+    <div class="mav">${isN ? '📜' : '生'}</div>
+    <div class="mbody">
+      <div class="mlabel">${isN ? '古文ナレーター' : 'あなた'}</div>
+      <div class="mbubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')}</div>
+    </div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  S.history.push({ role, parts: [{ text }] });
+}
+function showTyping() {
+  const box = document.getElementById('msgs');
+  const div = document.createElement('div');
+  div.className = 'msg narrator'; div.id = 'tMsg';
+  div.innerHTML = `<div class="mav">📜</div><div class="mbody"><div class="mlabel">古文ナレーター</div><div class="mbubble"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
+  box.appendChild(div); box.scrollTop = box.scrollHeight;
+}
+function rmTyping() { const e = document.getElementById('tMsg'); if (e) e.remove(); }
+
+async function send() {
+  const inp = document.getElementById('cInput');
+  const txt = inp.value.trim();
+  if (!txt || S.typing) return;
+  GKEY = localStorage.getItem(KEY_ID);
+  if (!GKEY) { document.getElementById('keyBanner').classList.remove('hidden'); toast('先にAPIキーを設定してください'); return; }
+  if (!S.chatActive) activateChat();
+  addMsg('user', txt); S.uCount++;
+  inp.value = ''; autoH(inp);
+  S.typing = true; document.getElementById('sBtn').disabled = true;
+  showTyping();
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GKEY}`;
+    const body = {
+      system_instruction: { parts: [{ text: SYSTEM }] },
+      contents: S.history.slice(-12),
+      generationConfig: { maxOutputTokens: 600, temperature: 0.75 }
+    };
+    const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    rmTyping();
+    if (data.error) {
+      addMsg('model', `⚠️ APIエラー：${data.error.message}\n\nAPIキーをご確認ください。`);
+    } else {
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '申し訳ありません、うまく答えられませんでした。';
+      addMsg('model', reply);
+      if (S.uCount >= 3) document.getElementById('cNote').classList.add('show');
+    }
+  } catch(err) {
+    rmTyping();
+    addMsg('model', `⚠️ ネットワークエラーが発生しました。\n（${err.message}）\n\n接続とAPIキーをご確認ください。`);
+  }
+  S.typing = false; document.getElementById('sBtn').disabled = false;
+}
+
+function resume() {
+  S.interrupted = false; S.chatActive = false;
+  const s = document.getElementById('cStatus'); s.textContent = '待機中'; s.classList.remove('on');
+  document.getElementById('rBtn').classList.remove('show');
+  document.getElementById('cNote').classList.remove('show');
+  setMic('on','音声検知中');
+  document.getElementById('sind').classList.remove('on');
+  addMsg('model', '動画の続きをどうぞ。またわからないことがあれば「先生、質問です」と呼んでください📜');
+  if (yt) setTimeout(() => yt.playVideo(), 600);
+  toast('動画を再開します');
+}
+
+// ===== 手動マイク =====
+function toggleMic() {
+  const btn = document.getElementById('micBtn');
+  if (S.manualOn) { S.manualRec?.stop(); S.manualOn = false; btn.classList.remove('rec'); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('音声認識非対応です'); return; }
+  S.manualRec = new SR(); S.manualRec.lang = 'ja-JP'; S.manualRec.interimResults = false;
+  S.manualRec.onresult = e => { document.getElementById('cInput').value = e.results[0][0].transcript; autoH(document.getElementById('cInput')); };
+  S.manualRec.onend = () => { S.manualOn = false; btn.classList.remove('rec'); };
+  S.manualRec.onerror = () => { S.manualOn = false; btn.classList.remove('rec'); };
+  S.manualRec.start(); S.manualOn = true; btn.classList.add('rec');
+  toast('話してください…');
+}
+
+// ===== ユーティリティ =====
+function onKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
+function autoH(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+function tab(name, btn) {
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tc-'+name).classList.add('on'); btn.classList.add('on');
+}
+let tT;
+function toast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(tT); tT = setTimeout(()=>t.classList.remove('on'), 2800);
+}
+
+// YouTube API読み込み
+const sc = document.createElement('script');
+sc.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(sc);
+setTimeout(() => { if (!yt) startListen(); }, 3500);
+</script>
+</body>
+</html>
