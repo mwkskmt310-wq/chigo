@@ -324,6 +324,7 @@
     </div>
     <div class="vid-ctrl">
       <button class="cbtn" id="playBtn" onclick="togglePlay()">▶ 再生</button>
+      <button class="cbtn" onclick="doInterrupt()" style="background:var(--vermilion);border-color:var(--vermilion);">🎙️ AI呼び出し</button>
       <div class="prog-wrap" onclick="seekVid(event)">
         <div class="prog-fill" id="pFill"></div>
       </div>
@@ -481,7 +482,7 @@ function saveKey() {
   document.getElementById('keyBanner').classList.add('hidden');
   toast('✅ APIキーを保存しました');
 }
-let GKEY = loadKey();
+let GKEY = 'AIzaSyBbtabzir1-eLTZOrhDobQl5XqjCOAYC2c';
 
 // ===== 状態 =====
 const S = {
@@ -590,7 +591,8 @@ function startListen() {
   S.rec.onresult = e => {
     let t = '';
     for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-    const kws = ['先生、質問','先生質問','先生しつもん','せんせい質問','AI先生','えーあい先生'];
+    console.log('音声認識:', t); // デバッグ用
+    const kws = ['先生','質問','せんせい','しつもん','ちご','児','そら寝','古文','止めて','とめて','ストップ','stop'];
     if (kws.some(w => t.includes(w)) && !S.interrupted) doInterrupt();
   };
   S.rec.onerror = e => { if (e.error !== 'aborted') setTimeout(startListen, 2000); };
@@ -669,8 +671,6 @@ async function send() {
   const inp = document.getElementById('cInput');
   const txt = inp.value.trim();
   if (!txt || S.typing) return;
-  GKEY = localStorage.getItem(KEY_ID);
-  if (!GKEY) { document.getElementById('keyBanner').classList.remove('hidden'); toast('先にAPIキーを設定してください'); return; }
   if (!S.chatActive) activateChat();
   addMsg('user', txt); S.uCount++;
   inp.value = ''; autoH(inp);
