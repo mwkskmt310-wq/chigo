@@ -482,7 +482,7 @@ function saveKey() {
   document.getElementById('keyBanner').classList.add('hidden');
   toast('✅ APIキーを保存しました');
 }
-let GKEY = 'AIzaSyDYin4QQDqwPBLPAyeNlzpyAP2EPEco7io';
+let GKEY = 'AIzaSyB1kb92gpR146GqfLdfe-UEbh_Tg1zY0xY';
 
 // ===== 状態 =====
 const S = {
@@ -765,7 +765,7 @@ async function send() {
   S.typing = true; document.getElementById('sBtn').disabled = true;
   showTyping();
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GKEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${GKEY}`;
     const body = {
       system_instruction: { parts: [{ text: SYSTEM }] },
       contents: S.history.slice(-12),
