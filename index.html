@@ -482,7 +482,7 @@ function saveKey() {
   document.getElementById('keyBanner').classList.add('hidden');
   toast('✅ APIキーを保存しました');
 }
-let GKEY = 'AIzaSyCd1odyJGZAuf22AfMfPykBGjsBYjcFWUw';
+let GKEY = 'AIzaSyCS44xekUoqgBA4H3QAv2RXS1wb5Anl3Do';
 
 // ===== 状態 =====
 const S = {
@@ -765,11 +765,10 @@ async function send() {
   S.typing = true; document.getElementById('sBtn').disabled = true;
   showTyping();
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GKEY}`;
+    const url = `https://chigo-api.vercel.app/api/ask`;
     const body = {
-      system_instruction: { parts: [{ text: SYSTEM }] },
-      contents: S.history.slice(-12),
-      generationConfig: { maxOutputTokens: 600, temperature: 0.75 }
+      system: SYSTEM,
+      messages: S.history.slice(-12)
     };
     const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
     const data = await res.json();
