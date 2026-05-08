@@ -134,6 +134,31 @@
   .ov-sub { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
 
   .vid-ctrl { padding: 0.75rem 1.3rem; display: flex; align-items: center; gap: 0.9rem; background: rgba(255,255,255,0.04); }
+  .ptt-btn {
+    background: var(--vermilion);
+    color: white; border: none;
+    border-radius: 50px;
+    padding: 10px 28px;
+    font-size: 0.88rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    box-shadow: 0 3px 12px rgba(192,57,43,0.4);
+    flex-shrink: 0;
+  }
+  .ptt-btn.recording {
+    background: #e74c3c;
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px rgba(231,76,60,0.3), 0 3px 12px rgba(192,57,43,0.5);
+    animation: pttPulse 0.8s ease-in-out infinite;
+  }
+  @keyframes pttPulse {
+    0%,100% { box-shadow: 0 0 0 4px rgba(231,76,60,0.3); }
+    50% { box-shadow: 0 0 0 10px rgba(231,76,60,0.1); }
+  }
   .cbtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 8px; padding: 5px 14px; font-size: 0.76rem; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background 0.2s; }
   .cbtn:hover { background: rgba(255,255,255,0.18); }
   .prog-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; }
@@ -149,6 +174,8 @@
   .chat { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); margin-bottom: 1.4rem; }
 
   .chat-head { background: var(--nb); padding: 0.85rem 1.3rem; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--na); }
+  .dl-btn { background: rgba(212,160,23,0.15); color: var(--na); border: 1px solid var(--na); border-radius: 8px; padding: 4px 10px; font-size: 0.7rem; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: all 0.2s; white-space: nowrap; }
+  .dl-btn:hover { background: var(--na); color: var(--nb); }
   .nav { width: 42px; height: 42px; border-radius: 50%; background: rgba(212,160,23,0.12); border: 2px solid var(--na); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
   .ninfo { flex: 1; }
   .nname { font-family: 'Noto Serif JP', serif; font-size: 0.95rem; color: var(--na); font-weight: 500; letter-spacing: 0.06em; }
@@ -280,12 +307,13 @@
   <div class="howto">
     <span style="font-size:1.4rem;flex-shrink:0;">🎙️</span>
     <div>
-      <div style="font-weight:500;margin-bottom:5px;">動画のナレーターに「先生、質問です」と話しかけると、動画が止まってナレーターと直接会話できます</div>
+      <div style="font-weight:500;margin-bottom:5px;">動画下の「長押しして話す」ボタンを押しながら話しかけると、動画が止まってナレーターと会話できます</div>
       <div class="steps">
         <div class="step"><div class="snum">1</div>動画を再生する</div>
-        <div class="step"><div class="snum">2</div>「先生、質問です」と話す</div>
-        <div class="step"><div class="snum">3</div>動画が止まりナレーターと会話</div>
-        <div class="step"><div class="snum">4</div>「動画を再開」で続きへ</div>
+        <div class="step"><div class="snum">2</div>🎙️ボタンを長押し</div>
+        <div class="step"><div class="snum">3</div>「先生、質問です」と話す</div>
+        <div class="step"><div class="snum">4</div>動画が止まりナレーターと会話</div>
+        <div class="step"><div class="snum">5</div>「動画を再開」で続きへ</div>
       </div>
     </div>
   </div>
@@ -324,15 +352,13 @@
     </div>
     <div class="vid-ctrl">
       <button class="cbtn" id="playBtn" onclick="togglePlay()">▶ 再生</button>
-      <button class="cbtn" onclick="doInterrupt()" style="background:var(--vermilion);border-color:var(--vermilion);">🎙️ AI呼び出し</button>
       <div class="prog-wrap" onclick="seekVid(event)">
         <div class="prog-fill" id="pFill"></div>
       </div>
       <div class="tdisp" id="tDisp">0:00 / 0:00</div>
-      <div class="mic-s">
-        <div class="mdot" id="mDot"></div>
-        <span id="mTxt">マイク待機中</span>
-      </div>
+      <button class="ai-ask-btn" id="aiAskBtn" onclick="startAskMode()">
+        🎙️ AI先生に質問
+      </button>
     </div>
   </div>
 
@@ -344,6 +370,8 @@
         <div class="nname">古文ナレーター</div>
         <div class="nrole">「児のそら寝」解説動画の語り手 — 何でも聞いてください</div>
       </div>
+      <button class="dl-btn" onclick="downloadTxt()" title="会話をテキストで保存">📄 TXT</button>
+      <button class="dl-btn" onclick="downloadHtml()" title="会話をHTML(印刷用)で保存">🖨️ 印刷</button>
       <div class="cstatus" id="cStatus">待機中</div>
     </div>
 
@@ -356,12 +384,12 @@
     <div class="cnote" id="cNote">✅ 会話が一段落しました。「動画を再開」ボタンで続きを見てみましょう！</div>
 
     <div class="inp-area">
-      <button class="micbtn" id="micBtn" onclick="toggleMic()" title="マイクで話す">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+      <button class="voice-input-btn" id="voiceInputBtn" onclick="startVoiceInput()" title="音声で質問する">
+        🎙️ 話して質問
       </button>
       <textarea
         class="cinput" id="cInput"
-        placeholder="質問を入力…（例：「念じて」ってどういう意味ですか？）"
+        placeholder="音声入力後ここに表示されます。修正してから送信できます。"
         rows="1"
         onkeydown="onKey(event)"
         oninput="autoH(this)"
@@ -647,7 +675,7 @@ let yt = null;
 window.onYouTubeIframeAPIReady = () => {
   yt = new YT.Player('main-video', {
     events: {
-      onReady: () => { toast('動画の準備ができました'); startListen(); },
+      onReady: () => { toast('動画の準備ができました'); },
       onStateChange: e => {
         S.playing = e.data === YT.PlayerState.PLAYING;
         document.getElementById('playBtn').textContent = S.playing ? '⏸ 一時停止' : '▶ 再生';
@@ -669,33 +697,68 @@ function rafP() {
   if (S.playing) requestAnimationFrame(rafP);
 }
 
-// ===== 音声認識（ウェイクワード） =====
-function startListen() {
+// ===== Push-to-Talk =====
+let pttRec = null;
+let pttActive = false;
+
+function startPTT(e) {
+  if (e) e.preventDefault();
+  if (pttActive || S.interrupted) return;
+
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { setMic('off','非対応ブラウザ'); return; }
-  S.rec = new SR();
-  S.rec.lang = 'ja-JP'; S.rec.continuous = true; S.rec.interimResults = true;
-  S.rec.onstart = () => { S.listening = true; setMic('on','音声検知中'); showInd('「先生、質問です」と話しかけてください', 3200); };
-  S.rec.onresult = e => {
-    let t = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-    console.log('音声認識:', t); // デバッグ用
-    const kws = ['先生','質問','せんせい','しつもん','ちご','児','そら寝','古文','止めて','とめて','ストップ','stop'];
-    if (kws.some(w => t.includes(w)) && !S.interrupted) doInterrupt();
+  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
+
+  // 動画を一時停止
+  if (yt && S.playing) yt.pauseVideo();
+
+  pttActive = true;
+  const btn = document.getElementById('pttBtn');
+  btn.classList.add('recording');
+  btn.textContent = '🔴 話しています…';
+  document.getElementById('pttStatus').textContent = '聞いています。「先生、質問です」と話してください';
+  document.getElementById('pttStatus').style.color = '#e74c3c';
+
+  pttRec = new SR();
+  pttRec.lang = 'ja-JP';
+  pttRec.continuous = false;
+  pttRec.interimResults = false;
+
+  pttRec.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    toast(`認識：「${transcript}」`);
+    // 質問関連のキーワードが含まれていたら割り込み
+    const kws = ['先生','質問','せんせい','しつもん','止めて','とめて','ストップ','ナレーター','古文','そら寝'];
+    if (kws.some(w => transcript.includes(w))) {
+      doInterrupt();
+    } else {
+      // キーワードなしでも動画を止めてチャットへ
+      doInterrupt();
+    }
   };
-  S.rec.onerror = e => { if (e.error !== 'aborted') setTimeout(startListen, 2000); };
-  S.rec.onend = () => { if (S.listening && !S.interrupted) setTimeout(startListen, 600); };
-  try { S.rec.start(); } catch(e) { setTimeout(startListen, 1000); }
+
+  pttRec.onerror = e => {
+    stopPTT();
+    if (e.error === 'no-speech') toast('声が聞き取れませんでした。もう一度試してください');
+    else toast('マイクエラー：' + e.error);
+  };
+
+  pttRec.onend = () => { stopPTT(); };
+
+  try { pttRec.start(); } catch(e) { stopPTT(); }
 }
-function setMic(type, txt) {
-  const d = document.getElementById('mDot');
-  d.className = 'mdot' + (type==='on' ? ' on' : type==='hit' ? ' hit' : '');
-  document.getElementById('mTxt').textContent = txt;
-}
-function showInd(txt, hide=0) {
-  document.getElementById('sindTxt').textContent = txt;
-  document.getElementById('sind').classList.add('on');
-  if (hide) setTimeout(() => document.getElementById('sind').classList.remove('on'), hide);
+
+function stopPTT(e) {
+  if (e) e.preventDefault();
+  if (!pttActive) return;
+  pttActive = false;
+  const btn = document.getElementById('pttBtn');
+  btn.classList.remove('recording');
+  btn.textContent = '🎙️ 長押しして話す';
+  document.getElementById('pttStatus').textContent = 'ボタンを長押しして「先生、質問です」と話しかけてください';
+  document.getElementById('pttStatus').style.color = 'rgba(255,255,255,0.4)';
+  if (pttRec) { try { pttRec.stop(); } catch(e) {} pttRec = null; }
+  // キーワードなしで終わった場合は動画を再開
+  if (!S.interrupted && yt) setTimeout(() => { if (!S.interrupted) yt.playVideo(); }, 300);
 }
 
 // ===== 割り込み処理 =====
@@ -792,11 +855,14 @@ function resume() {
   const s = document.getElementById('cStatus'); s.textContent = '待機中'; s.classList.remove('on');
   document.getElementById('rBtn').classList.remove('show');
   document.getElementById('cNote').classList.remove('show');
-  setMic('on','音声検知中');
   document.getElementById('sind').classList.remove('on');
-  addMsg('model', '動画の続きをどうぞ。またわからないことがあれば「先生、質問です」と呼んでください📜');
-  if (yt) setTimeout(() => yt.playVideo(), 600);
-  toast('動画を再開します');
+  addMsg('model', '動画の続きをどうぞ。またわからないことがあれば「🎙️ AI先生に質問」ボタンを押してください📜');
+  if (yt) {
+    const cur = yt.getCurrentTime();
+    yt.seekTo(Math.max(0, cur - 10), true);
+    setTimeout(() => yt.playVideo(), 400);
+  }
+  toast('10秒前から動画を再開します');
 }
 
 // ===== 手動マイク =====
@@ -811,6 +877,64 @@ function toggleMic() {
   S.manualRec.onerror = () => { S.manualOn = false; btn.classList.remove('rec'); };
   S.manualRec.start(); S.manualOn = true; btn.classList.add('rec');
   toast('話してください…');
+}
+
+// ===== 会話ダウンロード =====
+function downloadTxt() {
+  if (S.history.length === 0) { toast('まだ会話がありません'); return; }
+  const now = new Date();
+  const date = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
+  let txt = `児のそら寝 — AI先生との会話記録\n作成日：${date}\n${'='.repeat(40)}\n\n`;
+  S.history.forEach(m => {
+    const role = m.role === 'model' ? '【古文ナレーター】' : '【あなた】';
+    const text = m.parts[0].text.replace(/<[^>]+>/g, '');
+    txt += `${role}\n${text}\n\n`;
+  });
+  txt += `${'='.repeat(40)}\n宇治拾遺物語「児のそら寝」自習教材`;
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `児のそら寝_会話記録_${date.replace(/\//g,'-')}.txt`;
+  a.click();
+  toast('テキストファイルをダウンロードしました');
+}
+
+function downloadHtml() {
+  if (S.history.length === 0) { toast('まだ会話がありません'); return; }
+  const now = new Date();
+  const date = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
+  let rows = '';
+  S.history.forEach(m => {
+    const isN = m.role === 'model';
+    const role = isN ? '📜 古文ナレーター' : '👤 あなた';
+    const bg = isN ? '#fff8e6' : '#e8edf8';
+    const border = isN ? '#d4a017' : '#2c3e6b';
+    const text = m.parts[0].text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    rows += `<div style="margin:12px 0;padding:12px 16px;background:${bg};border-left:4px solid ${border};border-radius:8px;">
+      <div style="font-size:0.8rem;color:#666;margin-bottom:6px;font-weight:bold;">${role}</div>
+      <div style="font-size:0.9rem;line-height:1.8;color:#1a1208;">${text}</div>
+    </div>`;
+  });
+  const html = `<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8">
+<title>児のそら寝 会話記録</title>
+<style>
+  body{font-family:'Noto Sans JP',sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1208;background:#f5f0e8;}
+  h1{font-size:1.4rem;border-bottom:3px solid #c0392b;padding-bottom:8px;color:#1a1208;}
+  .meta{font-size:0.8rem;color:#888;margin-bottom:24px;}
+  @media print{body{margin:0;padding:20px;}}
+</style></head><body>
+<h1>📜 児のそら寝 — AI先生との会話記録</h1>
+<div class="meta">作成日：${date}　／　宇治拾遺物語「児のそら寝」自習教材</div>
+${rows}
+<div style="margin-top:32px;font-size:0.75rem;color:#aaa;text-align:center;">宇治拾遺物語「児のそら寝」自習教材より</div>
+</body></html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `児のそら寝_会話記録_${date.replace(/\//g,'-')}.html`;
+  a.click();
+  toast('印刷用HTMLをダウンロードしました（ブラウザで開いてCtrl+Pで印刷できます）');
 }
 
 // ===== ユーティリティ =====
@@ -831,7 +955,6 @@ function toast(msg) {
 const sc = document.createElement('script');
 sc.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(sc);
-setTimeout(() => { if (!yt) startListen(); }, 3500);
 </script>
 </body>
 </html>
