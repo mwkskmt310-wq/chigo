@@ -761,7 +761,54 @@ function stopPTT(e) {
   if (!S.interrupted && yt) setTimeout(() => { if (!S.interrupted) yt.playVideo(); }, 300);
 }
 
-// ===== 割り込み処理 =====
+// ===== 音声読み上げ =====
+let currentUtterance = null;
+
+function speak(text) {
+  // 前の読み上げを停止
+  window.speechSynthesis.cancel();
+
+  // HTMLタグと絵文字を除去してプレーンテキストに
+  const plain = text
+    .replace(/<[^>]+>/g, '')
+    .replace(/[📜🏮📖⚠️✅]/g, '')
+    .trim();
+
+  if (!plain) return;
+
+  const utter = new SpeechSynthesisUtterance(plain);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.95;
+  utter.pitch = 1.1;
+  utter.volume = 1.0;
+
+  // 日本語女性の声を選択
+  const voices = window.speechSynthesis.getVoices();
+  const jaFemale = voices.find(v =>
+    v.lang.startsWith('ja') && (
+      v.name.includes('Female') ||
+      v.name.includes('female') ||
+      v.name.includes('Kyoko') ||
+      v.name.includes('Google 日本語') ||
+      v.name.includes('お姉さん') ||
+      v.name.includes('Haruka')
+    )
+  ) || voices.find(v => v.lang.startsWith('ja'));
+
+  if (jaFemale) utter.voice = jaFemale;
+
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking() {
+  window.speechSynthesis.cancel();
+}
+
+// 声のリストが非同期で読み込まれる場合の対応
+window.speechSynthesis.onvoiceschanged = () => {};
+
+
 function doInterrupt() {
   S.interrupted = true;
   setMic('hit','質問を検知！');
@@ -808,6 +855,9 @@ function addMsg(role, text) {
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
   S.history.push({ role, parts: [{ text }] });
+
+  // ナレーターの回答を自動読み上げ
+  if (isN) speak(text);
 }
 function showTyping() {
   const box = document.getElementById('msgs');
@@ -851,6 +901,7 @@ async function send() {
 }
 
 function resume() {
+  stopSpeaking(); // 読み上げ中なら停止
   S.interrupted = false; S.chatActive = false;
   const s = document.getElementById('cStatus'); s.textContent = '待機中'; s.classList.remove('on');
   document.getElementById('rBtn').classList.remove('show');
