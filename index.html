@@ -1006,6 +1006,40 @@ function toast(msg) {
 const sc = document.createElement('script');
 sc.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(sc);
+  // ===== AI先生に質問ボタン =====
+function startAskMode() {
+  // 動画を止める（ytが準備できていれば）
+  if (yt) {
+    try { yt.pauseVideo(); } catch(e) {}
+  }
+  // 少し待ってからdoInterruptを呼ぶ（pauseVideo が非同期のため）
+  setTimeout(() => {
+    doInterrupt();
+  }, 400);
+}
+
+// ===== 音声入力ボタン（チャット欄）=====
+function startVoiceInput() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
+  const rec = new SR();
+  rec.lang = 'ja-JP';
+  rec.interimResults = false;
+  rec.onresult = e => {
+    document.getElementById('cInput').value = e.results[0][0].transcript;
+    autoH(document.getElementById('cInput'));
+  };
+  rec.onerror = () => toast('音声認識エラーが発生しました');
+  rec.start();
+  toast('話してください…');
+}
+  function setMic(state, msg) { /* 表示不要なら空でOK */ }
+function showInd(msg) {
+  const el = document.getElementById('sind');
+  document.getElementById('sindTxt').textContent = msg;
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 3000);
+}
 </script>
 </body>
 </html>
