@@ -641,35 +641,16 @@ const VIDEO_IDS = [
 const VIDEO_TITLES = ['原文音読', '現代語の物語', '原文と現代語の交互再生'];
 
 function switchVideo(idx) {
-  // タブ切り替え
   document.querySelectorAll('.vtab').forEach((t,i) => t.classList.toggle('on', i===idx));
-  // iframeのsrcを差し替え
-  const iframe = document.getElementById('main-video');
-  iframe.src = `https://www.youtube.com/embed/${VIDEO_IDS[idx]}?enablejsapi=1&rel=0&modestbranding=1`;
-  // YouTube APIのプレーヤーを再初期化
-  yt = null;
+  if (!yt) return;
+  yt.loadVideoById(VIDEO_IDS[idx]);
+  yt.pauseVideo();
   S.playing = false;
   document.getElementById('playBtn').textContent = '▶ 再生';
   document.getElementById('pFill').style.width = '0%';
   document.getElementById('tDisp').textContent = '0:00 / 0:00';
-  // iframeロード後にAPIを再アタッチ
-  iframe.onload = () => {
-    setTimeout(() => {
-      yt = new YT.Player('main-video', {
-        events: {
-          onReady: () => toast(`「${VIDEO_TITLES[idx]}」の準備ができました`),
-          onStateChange: e => {
-            S.playing = e.data === YT.PlayerState.PLAYING;
-            document.getElementById('playBtn').textContent = S.playing ? '⏸ 一時停止' : '▶ 再生';
-            if (S.playing) rafP();
-          }
-        }
-      });
-    }, 800);
-  };
   toast(`「${VIDEO_TITLES[idx]}」に切り替えました`);
 }
-
 // ===== YouTube API =====
 let yt = null;
 window.onYouTubeIframeAPIReady = () => {
