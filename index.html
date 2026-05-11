@@ -478,19 +478,6 @@
 
 <script>
 // ===== APIキー管理 =====
-const KEY_ID = 'chigo_gemini_key';
-function loadKey() {
-  const k = localStorage.getItem(KEY_ID);
-  if (k) document.getElementById('keyBanner').classList.add('hidden');
-  return k;
-}
-function saveKey() {
-  const v = document.getElementById('keyInput').value.trim();
-  if (!v || !v.startsWith('AIza')) { toast('正しいAPIキーを入力してください（AIzaで始まります）'); return; }
-  localStorage.setItem(KEY_ID, v);
-  document.getElementById('keyBanner').classList.add('hidden');
-  toast('✅ APIキーを保存しました');
-}
 
 // ===== 状態 =====
 const S = {
