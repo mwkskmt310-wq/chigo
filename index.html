@@ -850,21 +850,46 @@ async function send() {
 }
 
 function resume() {
-  stopSpeaking(); // 読み上げ中なら停止
+  stopSpeaking();
   S.interrupted = false; S.chatActive = false;
   const s = document.getElementById('cStatus'); s.textContent = '待機中'; s.classList.remove('on');
   document.getElementById('rBtn').classList.remove('show');
   document.getElementById('cNote').classList.remove('show');
   document.getElementById('sind').classList.remove('on');
-  addMsg('model', '動画の続きをどうぞ。またわからないことがあれば「🎙️ AI先生に質問」ボタンを押してください📜');
+
+  // 再開メッセージを読み上げ、終わったら動画を再生
+  const msg = '動画の続きをどうぞ。またわからないことがあれば「AI先生に質問」ボタンを押してください。';
+  addMsg('model', msg);
+
+  // 読み上げ終了後に動画を再開する
   if (yt) {
     const cur = yt.getCurrentTime();
-    yt.seekTo(Math.max(0, cur - 10), true);
-    setTimeout(() => yt.playVideo(), 400);
-  }
-  toast('10秒前から動画を再開します');
-}
+    const resumeTime = Math.max(0, cur - 3);
 
+    const utter = new SpeechSynthesisUtterance(msg.replace(/[📜🏮📖]/g, ''));
+    utter.lang = 'ja-JP';
+    utter.rate = 0.95;
+
+    const voices = window.speechSynthesis.getVoices();
+    const jaVoice = voices.find(v =>
+      v.lang.startsWith('ja') && (
+        v.name.includes('Kyoko') || v.name.includes('Google 日本語') ||
+        v.name.includes('Female') || v.name.includes('Haruka')
+      )
+    ) || voices.find(v => v.lang.startsWith('ja'));
+    if (jaVoice) utter.voice = jaVoice;
+
+    utter.onend = () => {
+      yt.seekTo(resumeTime, true);
+      setTimeout(() => yt.playVideo(), 300);
+    };
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  toast('AI先生の話が終わったら動画を再開します');
+}
 // ===== 手動マイク =====
 function toggleMic() {
   const btn = document.getElementById('micBtn');
