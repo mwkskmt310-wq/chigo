@@ -1019,40 +1019,6 @@ function askBtnUp() {
   document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
 }
 
-// ===== AI先生に質問ボタン（長押しで音声認識）=====
-let askHoldTimer = null;
-
-function askBtnDown() {
-  // 動画をすぐ止める
-  if (yt) { try { yt.pauseVideo(); } catch(e) {} }
-  if (!S.chatActive) {
-    setTimeout(() => doInterrupt(), 400);
-  }
-  // 音声認識開始
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
-  const rec = new SR();
-  rec.lang = 'ja-JP';
-  rec.interimResults = false;
-  rec.onresult = e => {
-    const txt = e.results[0][0].transcript;
-    document.getElementById('cInput').value = txt;
-    autoH(document.getElementById('cInput'));
-    toast(`認識：「${txt}」`);
-  };
-  rec.onerror = () => toast('音声認識エラーが発生しました');
-  rec.start();
-  S._askRec = rec;
-  document.getElementById('aiAskBtn').textContent = '🔴 話してください…';
-}
-
-function askBtnUp() {
-  if (S._askRec) {
-    try { S._askRec.stop(); } catch(e) {}
-    S._askRec = null;
-  }
-  document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
-}
 
 // ===== 話して質問ボタン（クリックで音声入力）=====
 function startVoiceInput() {
