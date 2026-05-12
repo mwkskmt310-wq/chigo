@@ -650,69 +650,7 @@ function rafP() {
   if (S.playing) requestAnimationFrame(rafP);
 }
 
-// ===== Push-to-Talk =====
-let pttRec = null;
-let pttActive = false;
 
-function startPTT(e) {
-  if (e) e.preventDefault();
-  if (pttActive || S.interrupted) return;
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
-
-  // 動画を一時停止
-  if (yt && S.playing) yt.pauseVideo();
-
-  pttActive = true;
-  const btn = document.getElementById('pttBtn');
-  btn.classList.add('recording');
-  btn.textContent = '🔴 話しています…';
-  document.getElementById('pttStatus').textContent = '聞いています。「先生、質問です」と話してください';
-  document.getElementById('pttStatus').style.color = '#e74c3c';
-
-  pttRec = new SR();
-  pttRec.lang = 'ja-JP';
-  pttRec.continuous = false;
-  pttRec.interimResults = false;
-
-  pttRec.onresult = e => {
-    const transcript = e.results[0][0].transcript;
-    toast(`認識：「${transcript}」`);
-    // 質問関連のキーワードが含まれていたら割り込み
-    const kws = ['先生','質問','せんせい','しつもん','止めて','とめて','ストップ','ナレーター','古文','そら寝'];
-    if (kws.some(w => transcript.includes(w))) {
-      doInterrupt();
-    } else {
-      // キーワードなしでも動画を止めてチャットへ
-      doInterrupt();
-    }
-  };
-
-  pttRec.onerror = e => {
-    stopPTT();
-    if (e.error === 'no-speech') toast('声が聞き取れませんでした。もう一度試してください');
-    else toast('マイクエラー：' + e.error);
-  };
-
-  pttRec.onend = () => { stopPTT(); };
-
-  try { pttRec.start(); } catch(e) { stopPTT(); }
-}
-
-function stopPTT(e) {
-  if (e) e.preventDefault();
-  if (!pttActive) return;
-  pttActive = false;
-  const btn = document.getElementById('pttBtn');
-  btn.classList.remove('recording');
-  btn.textContent = '🎙️ 長押しして話す';
-  document.getElementById('pttStatus').textContent = 'ボタンを長押しして「先生、質問です」と話しかけてください';
-  document.getElementById('pttStatus').style.color = 'rgba(255,255,255,0.4)';
-  if (pttRec) { try { pttRec.stop(); } catch(e) {} pttRec = null; }
-  // キーワードなしで終わった場合は動画を再開
-  if (!S.interrupted && yt) setTimeout(() => { if (!S.interrupted) yt.playVideo(); }, 300);
-}
 
 // ===== 音声読み上げ =====
 let currentUtterance = null;
