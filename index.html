@@ -337,9 +337,13 @@
         <div class="prog-fill" id="pFill"></div>
       </div>
       <div class="tdisp" id="tDisp">0:00 / 0:00</div>
-      <button class="ai-ask-btn" id="aiAskBtn" onclick="startAskMode()">
-        🎙️ AI先生に質問
-      </button>
+<button class="ai-ask-btn" id="aiAskBtn"
+  onmousedown="askBtnDown()"
+  onmouseup="askBtnUp()"
+  ontouchstart="askBtnDown()"
+  ontouchend="askBtnUp()">
+  🎙️ AI先生に質問
+</button>
     </div>
   </div>
 
