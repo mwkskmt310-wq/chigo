@@ -738,7 +738,7 @@ function addMsg(role, text) {
   div.innerHTML = `
     <div class="mav">${isN ? '📜' : '生'}</div>
     <div class="mbody">
-      <div class="mlabel">${isN ? '古文ナレーター' : 'あなた'}</div>
+      <div class="mlabel">${isN ? 'AI先生' : 'あなた'}</div>
       <div class="mbubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')}</div>
     </div>`;
   box.appendChild(div);
