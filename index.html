@@ -923,38 +923,67 @@ document.head.appendChild(sc);
 // ===== AI先生に質問ボタン（長押しで音声認識）=====
 let askHoldTimer = null;
 
-function askBtnDown() {
-  // 動画をすぐ止める
-  if (yt) { try { yt.pauseVideo(); } catch(e) {} }
-  if (!S.chatActive) {
-    setTimeout(() => doInterrupt(), 400);
-  }
-  // 音声認識開始
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
-  const rec = new SR();
-  rec.lang = 'ja-JP';
-  rec.interimResults = false;
-  rec.onresult = e => {
-    const txt = e.results[0][0].transcript;
-    document.getElementById('cInput').value = txt;
-    autoH(document.getElementById('cInput'));
-    toast(`認識：「${txt}」`);
-  };
-  rec.onerror = () => toast('音声認識エラーが発生しました');
-  rec.start();
-  S._askRec = rec;
-  document.getElementById('aiAskBtn').textContent = '🔴 話してください…';
-}
+function askBtnDown(e) {
+  if (e) e.preventDefault(); // touchstart と mousedown の二重発火を防ぐ
 
-function askBtnUp() {
+  // 前の認識が残っていたら止める
   if (S._askRec) {
     try { S._askRec.stop(); } catch(e) {}
     S._askRec = null;
   }
-  document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
+
+  // 動画を止める
+  if (yt) { try { yt.pauseVideo(); } catch(err) {} }
+  if (!S.chatActive) {
+    setTimeout(() => doInterrupt(), 400);
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('音声認識非対応のブラウザです'); return; }
+
+  const rec = new SR();
+  rec.lang = 'ja-JP';
+  rec.continuous = true;   // 長押し中は継続して認識
+  rec.interimResults = false;
+
+  rec.onresult = e => {
+    const txt = Array.from(e.results)
+      .map(r => r[0].transcript)
+      .join('');
+    document.getElementById('cInput').value = txt;
+    autoH(document.getElementById('cInput'));
+    toast(`認識：「${txt}」`);
+  };
+
+  rec.onerror = err => {
+    if (err.error === 'aborted') return; // 正常終了は無視
+    toast('音声認識エラー：' + err.error);
+    document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
+    S._askRec = null;
+  };
+
+  rec.onend = () => {
+    document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
+    S._askRec = null;
+  };
+
+  try {
+    rec.start();
+    S._askRec = rec;
+    document.getElementById('aiAskBtn').textContent = '🔴 話してください…';
+  } catch(err) {
+    toast('マイクを起動できませんでした');
+  }
 }
 
+function askBtnUp(e) {
+  if (e) e.preventDefault();
+  if (S._askRec) {
+    try { S._askRec.stop(); } catch(err) {}
+    S._askRec = null;
+  }
+  document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
+}
 
 // ===== 話して質問ボタン（クリックで音声入力）=====
 function startVoiceInput() {
