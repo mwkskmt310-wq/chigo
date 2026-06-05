@@ -63,34 +63,6 @@
 
   .main { max-width: 1100px; margin: 0 auto; padding: 1.8rem 1.5rem; position: relative; z-index: 1; }
 
-  /* APIキーバナー */
-  .key-banner {
-    background: #fff8e6; border: 1.5px solid var(--gold);
-    border-radius: 12px; padding: 1rem 1.3rem;
-    margin-bottom: 1.4rem;
-    display: flex; align-items: flex-start; gap: 1rem; flex-wrap: wrap;
-  }
-  .key-banner.hidden { display: none; }
-  .key-body { flex: 1; }
-  .key-title { font-size: 0.82rem; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
-  .key-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .key-input {
-    flex: 1; min-width: 200px;
-    border: 1px solid var(--paper-dark); border-radius: 8px;
-    padding: 7px 12px; font-size: 0.82rem; font-family: monospace;
-    background: white; color: var(--ink); outline: none;
-  }
-  .key-input:focus { border-color: var(--gold); }
-  .key-btn {
-    background: var(--gold); color: white; border: none;
-    border-radius: 8px; padding: 7px 18px;
-    font-size: 0.82rem; font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer; white-space: nowrap;
-  }
-  .key-btn:hover { opacity: 0.85; }
-  .key-note { font-size: 0.71rem; color: rgba(26,18,8,0.5); line-height: 1.6; }
-  .key-note a { color: var(--gold); }
-
   /* 使い方 */
   .howto {
     background: var(--indigo); color: white;
@@ -265,6 +237,39 @@
   .toast { position: fixed; top: 5rem; left: 50%; transform: translateX(-50%) translateY(-16px); background: var(--ink); color: var(--paper); padding: 9px 20px; border-radius: 50px; font-size: 0.78rem; z-index: 200; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
   .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* AI先生に質問ボタン */
+  .ai-ask-btn {
+    background: var(--vermilion);
+    color: white; border: none;
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    box-shadow: 0 3px 12px rgba(192,57,43,0.4);
+    flex-shrink: 0;
+  }
+  .ai-ask-btn:active { transform: scale(0.97); }
+
+  /* 話して質問ボタン */
+  .voice-input-btn {
+    background: var(--indigo);
+    color: white; border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .voice-input-btn:hover { background: var(--indigo-light); }
+
   @media (max-width: 600px) {
     .main { padding: 1rem; }
     header { padding: 0.85rem 1rem; }
@@ -279,7 +284,7 @@
     <div class="h-title">児のそら寝</div>
     <div class="h-sub">宇治拾遺物語 ／ 高校１年 古文</div>
   </div>
-  <div class="h-badge">ナレーターAI</div>
+  <div class="h-badge">AI先生</div>
 </header>
 
 <div class="main">
@@ -288,11 +293,11 @@
   <div class="howto">
     <span style="font-size:1.4rem;flex-shrink:0;">🎙️</span>
     <div>
-      <div style="font-weight:500;margin-bottom:5px;">動画下の「長押しして話す」ボタンを押しながら話しかけると、動画が止まってナレーターと会話できます</div>
+      <div style="font-weight:500;margin-bottom:5px;">動画下の「AI先生に質問」ボタンを押すと、動画が止まってAI先生と会話できます</div>
       <div class="steps">
         <div class="step"><div class="snum">1</div>動画を再生する</div>
         <div class="step"><div class="snum">2</div>🎙️AI先生に質問ボタンを押す</div>
-        <div class="step"><div class="snum">3</div>🎙️話して質問ボタンを押して話す</div>
+        <div class="step"><div class="snum">3</div>🎙️話して質問ボタンで話す</div>
         <div class="step"><div class="snum">4</div>動画が止まりAI先生と会話</div>
         <div class="step"><div class="snum">5</div>「動画を再開」ボタンで続きへ</div>
       </div>
@@ -327,7 +332,7 @@
       ></iframe>
       <div class="overlay" id="overlay">
         <div class="ov-avatar">📜</div>
-        <div class="ov-title">ナレーターが応答します</div>
+        <div class="ov-title">AI先生が応答します</div>
         <div class="ov-sub">動画を一時停止しました。下のチャットで質問してください</div>
       </div>
     </div>
@@ -337,13 +342,13 @@
         <div class="prog-fill" id="pFill"></div>
       </div>
       <div class="tdisp" id="tDisp">0:00 / 0:00</div>
-<button class="ai-ask-btn" id="aiAskBtn"
-  onmousedown="askBtnDown()"
-  onmouseup="askBtnUp()"
-  ontouchstart="askBtnDown()"
-  ontouchend="askBtnUp()">
-  🎙️ AI先生に質問
-</button>
+      <button class="ai-ask-btn" id="aiAskBtn"
+        onmousedown="askBtnDown()"
+        onmouseup="askBtnUp()"
+        ontouchstart="askBtnDown()"
+        ontouchend="askBtnUp()">
+        🎙️ AI先生に質問
+      </button>
     </div>
   </div>
 
@@ -481,28 +486,24 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    
-// ===== APIキー管理 =====
 
 // ===== 状態 =====
 const S = {
   playing: false, interrupted: false,
   listening: false, chatActive: false, typing: false,
-  history: [],   // Gemini形式: [{role:'user'|'model', parts:[{text}]}]
+  history: [],
   uCount: 0,
   rec: null, manualRec: null, manualOn: false
 };
 
-// システムプロンプト（ナレーターキャラクター）
-const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解説動画のナレーターです。
-今、動画を視聴中の高校1年生が動画を止めて質問してきました。
-以下の指導書・教材の内容に基づいて、正確に答えてください。
+// ===== システムプロンプト =====
+const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）を学ぶ高校1年生のためのAI先生です。
+動画を視聴中の生徒が学習中に質問してきました。以下の解説内容をもとに、正確にわかりやすく答えてください。
 
 【キャラクター設定】
-- この動画の中で語り続けてきたナレーター本人として話す
-- 「先ほど動画でお話しした〜」「今ちょうど説明していたところですが〜」のように動画の続きとして自然につながる口調にする
-- 古典文学に精通した、落ち着いた語り口
-- 生徒に寄り添う、優しく親しみやすい先生のような雰囲気
+- 古典文学に精通した、穏やかで親しみやすいAI先生として話す
+- 「先ほど動画で確認しましたが〜」「ちょうどその場面ですね〜」のように動画学習とつながる口調にする
+- 生徒に寄り添い、ていねいに説明する
 - 語尾は「〜ですよ」「〜ですね」「〜ましょう」など丁寧に
 - 絵文字は📜🏮📖を1〜2個まで使ってよい
 
@@ -512,14 +513,14 @@ const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解�
 【現代語訳】
 昔々、比叡の山に児がいたということだ。僧たちが、宵の手持ちぶさたなときに、「さあ、ぼたもちを作ろう。」と言ったのを、この児は、期待して聞いていた。そうかといって、作り出すのを待って寝ないのも、よくないだろうと思って、部屋の片隅に寄って、寝たふりをして、できてくるのを待っていたところ、もうでき上がった様子で、集まってがやがや言い合っている。この児は、きっと起こしてくれるだろうと待っていると、ある僧が、「もしもし。目をお覚ましください。」と言うのを、うれしいとは思うけれど、ただ一度だけで答えるのも、待っていたかと思うといけないと考えて、もう一声呼ばれてから答えようと、がまんして寝ていると、「おい、お起こし申し上げるな。幼い人はお眠りになってしまった。」と言う声がしたので、ああ困ったと思って、もう一度起こしてくれよと、思いながら寝て聞いていると、むしゃむしゃと盛んに食べる音がしたので、しかたがなくて、ずっと経ってから、「はい。」と答えたので、僧たちは笑うことがこのうえもなかった。
 
-【作品・時代背景（板書例より）】
+【作品・時代背景】
 ・ジャンル：説話（宇治拾遺物語）
 ・時代：鎌倉時代前期
 ・編者：未詳
-・内容：仏教に関するもの・世俗に関するもの
-・説話とは：噂や伝説、世間話をまとめたもの
+・内容：仏教説話・世俗説話を広く収録した説話集
+・説話とは：民間に伝わる話や伝説、寺院での逸話などをまとめた文学ジャンル
 ・主な説話集：平安時代→日本霊異記・今昔物語集、鎌倉時代→宇治拾遺物語・十訓抄・古今著聞集・沙石集
-・舞台：比叡山延暦寺（厳しい修行をする僧）
+・舞台：比叡山延暦寺
 ・登場人物：児（寺に預けられた公家・武家の子弟）、僧たち
 
 【重要語句の意味】
@@ -534,7 +535,7 @@ const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解�
 ・もの申しさぶらはむ：もしもし
 ・驚かせたまへ：目をお覚ましください
 ・いらへむも：答えるのも
-・もぞ思ふ：思うといけない（懸念）
+・もぞ思ふ：思うといけない（懸念を表す）
 ・念じて：がまんして
 ・な起こしたてまつりそ：お起こし申し上げるな（禁止「な〜そ」）
 ・幼き人：児のこと
@@ -548,7 +549,7 @@ const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解�
 ・いらへたりければ：答えたので
 ・笑ふことかぎりなし：笑うことがこのうえもなかった
 
-【形容詞の段階（板書例より）】
+【形容詞の評価段階（古語）】
 ・よし：絶対的に「よい」
 ・よろし：比較的に「悪くない」
 ・わろし：比較的に「よくない」
@@ -564,51 +565,42 @@ const SYSTEM = `あなたは「児のそら寝」（宇治拾遺物語）の解�
 ・「な起こしたてまつりそ」→な（副）＋起こし（動・サ四・連用）＋たてまつり（謙補動・ラ四・連用）＋そ（終助・禁止）
 ・「寝入りたまひにけり」→寝入り（動・ラ四・連用）＋たまひ（尊補動・ハ四・連用）＋に（助動・完了・連用）＋けり（助動・詠嘆・終止）
 
-【児の心理・あらすじ解説】
+【児の心理とあらすじ】
 ①児はぼたもちが食べたいが「寝ないで待っていたらいじきたない子と思われる」と考えて寝たふりをした
 ②一声目で返事をすると「待っていたかと思われる」とがまんした
 ③二声目を待っていたが「起こすな、寝てしまった」と言われてしまった→「あなわびし」
-④むしゃむしゃ食べる音を聞いて、しかたなく遅れて「えい」と返事→僧たちに笑われた
+④むしゃむしゃ食べる音を聞いて、しかたなくずっとたってから「えい」と返事→僧たちに笑われた
 
-【主題・鑑賞】
-・主題：児が懸命に考えたことがかえって失敗のもととなった滑稽味（答：ア）
-・僧たちが笑った理由：声をかけてからしばらくして児が返事をしたのがおもしろく、かわいらしく思ったから。児のぼたもちが食べたいという気持ちを隠して寝たふりをしていたことに気づき、かわいらしいと思ったから。
-・「わろかりなむ」で児が心配したこと：いじきたない子だと思われること（答：ア）
-・「あなわびし」の説明：僧にもう一度声をかけてもらえないことを残念に思っている（答：イ）
+【主題と鑑賞】
+・主題：体裁を気にするあまり、かえって失敗してしまった滑稽な話
+・僧たちが笑った理由：一声目の後、しばらくたってから返事した点が可笑しく、またぼたもちを食べたい気持ちを必死に隠していた様子がかわいらしかったから
+・「わろかりなむ」で児が心配したこと：食べ物に執着するいじきたない子だと思われること
+・「あなわびし」の内容：もう一度呼びかけてもらえないとわかり、残念で困ったと感じている心情
 
-【小テスト・標準問題・発展問題の重要解答】
-＜小テスト解答＞
-①驚かせたまへ→イ（目をお覚ましください）
-②念じて→ウ（がまんして）
-③な起こしたてまつりそ→ア（お起こし申し上げるな）
-④あなわびし→イ（ああ困った）
-⑤いらへたりければ→ウ（返事をしたので）
+【重要語句の意味を問う問題への対応】
+・「驚かせたまへ」の意味 → 目をお覚ましください（尊敬の命令表現）
+・「念じて」の意味 → がまんして
+・「な起こしたてまつりそ」の意味 → お起こし申し上げるな（禁止）
+・「あなわびし」の意味 → ああ困った・ああ残念だ
+・「いらへたりければ」の意味 → 返事をしたので
 
-＜標準問題解答＞
-問3空欄2→ア（お起こし申し上げるな）
-問4：Ⅰ＝ぼたもち、Ⅱ＝僧たち
-問5：「幼き人」＝児
-問6：イ（食べたいのをがまんして眠ったふりをしていたことがかわいらしかったから）
-
-＜発展問題解答＞
-問3（念じてすぐ返事しなかった理由）→ウ（食べ物にいやしくて、呼ばれるのを待っていると思われたくなかったから）
-問4（「児」の別の表現）→幼き人
-問5（あなわびしの理由）→僧たちに起こしてもらえなかったから
-問6（ひしひしと食ふのは誰）→僧たち
-問7（主題）→ア
+【本文理解を問う問題への対応】
+・「幼き人」が指すのは → 児のこと
+・ぼたもちを食べたのは → 僧たち
+・「ひしひしと食ふ」の音を聞いたのは → 僧たちがぼたもちを食べている音を児が聞いた
+・児が念じて返事をしなかった理由 → ぼたもちを待ち望んでいたと思われることを恥じたから
 
 【返答ルール】
 - 200〜400字程度でわかりやすく答える
-- 品詞分解・文法は上記の指導書に基づいた正確な情報で答える
-- テスト問題に関する質問には、解答と解説を丁寧に説明する
+- 品詞分解・文法は上記の内容に基づいた正確な説明をする
 - 難しい文法用語は平易な言葉でも補足する
 - 3往復以上したら「他に気になることはありますか？なければ動画の続きを見てみましょう」と促す`;
 
 // ===== 動画切り替え =====
 const VIDEO_IDS = [
-  'EhfdgmD3c8c', // 原文音読
-  'Vpe9I7vVX58', // 現代語の物語
-  'OFlsK0UOY_Y'  // 交互再生
+  'EhfdgmD3c8c',
+  'Vpe9I7vVX58',
+  'OFlsK0UOY_Y'
 ];
 const VIDEO_TITLES = ['原文音読', '現代語の物語', '原文と現代語の交互再生'];
 
@@ -623,6 +615,7 @@ function switchVideo(idx) {
   document.getElementById('tDisp').textContent = '0:00 / 0:00';
   toast(`「${VIDEO_TITLES[idx]}」に切り替えました`);
 }
+
 // ===== YouTube API =====
 let yt = null;
 window.onYouTubeIframeAPIReady = () => {
@@ -650,58 +643,34 @@ function rafP() {
   if (S.playing) requestAnimationFrame(rafP);
 }
 
-
 // ===== 音声読み上げ =====
-
 function speak(text) {
-  // 前の読み上げを停止
   window.speechSynthesis.cancel();
-
-  // HTMLタグと絵文字を除去してプレーンテキストに
-  const plain = text
-    .replace(/<[^>]+>/g, '')
-    .replace(/[📜🏮📖⚠️✅]/g, '')
-    .trim();
-
+  const plain = text.replace(/<[^>]+>/g, '').replace(/[📜🏮📖⚠️✅]/g, '').trim();
   if (!plain) return;
-
   const utter = new SpeechSynthesisUtterance(plain);
   utter.lang = 'ja-JP';
   utter.rate = 0.95;
   utter.pitch = 1.1;
   utter.volume = 1.0;
-
-  // 日本語女性の声を選択
   const voices = window.speechSynthesis.getVoices();
-  const jaFemale = voices.find(v =>
+  const jaVoice = voices.find(v =>
     v.lang.startsWith('ja') && (
-      v.name.includes('Female') ||
-      v.name.includes('female') ||
-      v.name.includes('Kyoko') ||
-      v.name.includes('Google 日本語') ||
-      v.name.includes('お姉さん') ||
+      v.name.includes('Female') || v.name.includes('female') ||
+      v.name.includes('Kyoko') || v.name.includes('Google 日本語') ||
       v.name.includes('Haruka')
     )
   ) || voices.find(v => v.lang.startsWith('ja'));
-
-  if (jaFemale) utter.voice = jaFemale;
-
-  currentUtterance = utter;
+  if (jaVoice) utter.voice = jaVoice;
   window.speechSynthesis.speak(utter);
 }
 
-function stopSpeaking() {
-  window.speechSynthesis.cancel();
-}
-
-// 声のリストが非同期で読み込まれる場合の対応
+function stopSpeaking() { window.speechSynthesis.cancel(); }
 window.speechSynthesis.onvoiceschanged = () => {};
-
 
 function doInterrupt() {
   S.interrupted = true;
-  setMic('hit','質問を検知！');
-  showInd('ナレーターが応答します…');
+  showInd('AI先生が応答します…');
   if (yt && S.playing) {
     const c = yt.getCurrentTime();
     yt.seekTo(Math.max(0, c - 3), true);
@@ -714,18 +683,19 @@ function doInterrupt() {
   const ops = [
     'はい、呼びましたね。今ちょうど大事な場面をご覧いただいていたところです。何でも聞いてください📜',
     'おや、動画を止めましたね。わからないことがあれば遠慮なくどうぞ。丁寧に説明しますよ🏮',
-    '先ほど動画でご説明した内容について気になりましたか？何でも答えますよ📖'
+    'ちょうど学習の途中ですね。気になったことは何でも質問してください📖'
   ];
   addMsg('model', ops[Math.floor(Math.random()*3)]);
   document.getElementById('rBtn').classList.add('show');
   document.getElementById('cInput').focus();
 }
+
 function activateChat() {
   S.chatActive = true;
   document.getElementById('empty').style.display = 'none';
   const s = document.getElementById('cStatus');
   s.textContent = '会話中'; s.classList.add('on');
-  toast('ナレーターが応答します');
+  toast('AI先生が応答します');
 }
 
 // ===== チャット =====
@@ -744,15 +714,14 @@ function addMsg(role, text) {
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
   S.history.push({ role, parts: [{ text }] });
-
-  // ナレーターの回答を自動読み上げ
   if (isN) speak(text);
 }
+
 function showTyping() {
   const box = document.getElementById('msgs');
   const div = document.createElement('div');
   div.className = 'msg narrator'; div.id = 'tMsg';
-  div.innerHTML = `<div class="mav">📜</div><div class="mbody"><div class="mlabel">古文ナレーター</div><div class="mbubble"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
+  div.innerHTML = `<div class="mav">📜</div><div class="mbody"><div class="mlabel">AI先生</div><div class="mbubble"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
   box.appendChild(div); box.scrollTop = box.scrollHeight;
 }
 function rmTyping() { const e = document.getElementById('tMsg'); if (e) e.remove(); }
@@ -776,7 +745,7 @@ async function send() {
     const data = await res.json();
     rmTyping();
     if (data.error) {
-      addMsg('model', `⚠️ APIエラー：${data.error.message}\n\nAPIキーをご確認ください。`);
+      addMsg('model', `⚠️ APIエラー：${data.error.message}\n\nしばらくしてから再度お試しください。`);
     } else {
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '申し訳ありません、うまく答えられませんでした。';
       addMsg('model', reply);
@@ -784,7 +753,7 @@ async function send() {
     }
   } catch(err) {
     rmTyping();
-    addMsg('model', `⚠️ ネットワークエラーが発生しました。\n（${err.message}）\n\n接続とAPIキーをご確認ください。`);
+    addMsg('model', `⚠️ ネットワークエラーが発生しました。\n（${err.message}）\n\n接続をご確認ください。`);
   }
   S.typing = false; document.getElementById('sBtn').disabled = false;
 }
@@ -797,19 +766,15 @@ function resume() {
   document.getElementById('cNote').classList.remove('show');
   document.getElementById('sind').classList.remove('on');
 
-  // 再開メッセージを読み上げ、終わったら動画を再生
   const msg = '動画の続きをどうぞ。またわからないことがあれば「AI先生に質問」ボタンを押してください。';
   addMsg('model', msg);
 
-  // 読み上げ終了後に動画を再開する
   if (yt) {
     const cur = yt.getCurrentTime();
     const resumeTime = Math.max(0, cur - 3);
-
     const utter = new SpeechSynthesisUtterance(msg.replace(/[📜🏮📖]/g, ''));
     utter.lang = 'ja-JP';
     utter.rate = 0.95;
-
     const voices = window.speechSynthesis.getVoices();
     const jaVoice = voices.find(v =>
       v.lang.startsWith('ja') && (
@@ -818,18 +783,16 @@ function resume() {
       )
     ) || voices.find(v => v.lang.startsWith('ja'));
     if (jaVoice) utter.voice = jaVoice;
-
     utter.onend = () => {
       yt.seekTo(resumeTime, true);
       setTimeout(() => yt.playVideo(), 300);
     };
-
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
   }
-
   toast('AI先生の話が終わったら動画を再開します');
 }
+
 // ===== 手動マイク =====
 function toggleMic() {
   const btn = document.getElementById('micBtn');
@@ -851,7 +814,7 @@ function downloadTxt() {
   const date = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
   let txt = `児のそら寝 — AI先生との会話記録\n作成日：${date}\n${'='.repeat(40)}\n\n`;
   S.history.forEach(m => {
-    const role = m.role === 'model' ? '【古文ナレーター】' : '【あなた】';
+    const role = m.role === 'model' ? '【AI先生】' : '【あなた】';
     const text = m.parts[0].text.replace(/<[^>]+>/g, '');
     txt += `${role}\n${text}\n\n`;
   });
@@ -871,7 +834,7 @@ function downloadHtml() {
   let rows = '';
   S.history.forEach(m => {
     const isN = m.role === 'model';
-    const role = isN ? '📜 古文ナレーター' : '👤 あなた';
+    const role = isN ? '📜 AI先生' : '👤 あなた';
     const bg = isN ? '#fff8e6' : '#e8edf8';
     const border = isN ? '#d4a017' : '#2c3e6b';
     const text = m.parts[0].text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
@@ -920,53 +883,40 @@ function toast(msg) {
 const sc = document.createElement('script');
 sc.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(sc);
-// ===== AI先生に質問ボタン（長押しで音声認識）=====
-let askHoldTimer = null;
 
+// ===== AI先生に質問ボタン =====
 function askBtnDown(e) {
-  if (e) e.preventDefault(); // touchstart と mousedown の二重発火を防ぐ
-
-  // 前の認識が残っていたら止める
+  if (e) e.preventDefault();
   if (S._askRec) {
     try { S._askRec.stop(); } catch(e) {}
     S._askRec = null;
   }
-
-  // 動画を止める
   if (yt) { try { yt.pauseVideo(); } catch(err) {} }
   if (!S.chatActive) {
     setTimeout(() => doInterrupt(), 400);
   }
-
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { toast('音声認識非対応のブラウザです'); return; }
-
   const rec = new SR();
   rec.lang = 'ja-JP';
-  rec.continuous = true;   // 長押し中は継続して認識
+  rec.continuous = true;
   rec.interimResults = false;
-
   rec.onresult = e => {
-    const txt = Array.from(e.results)
-      .map(r => r[0].transcript)
-      .join('');
+    const txt = Array.from(e.results).map(r => r[0].transcript).join('');
     document.getElementById('cInput').value = txt;
     autoH(document.getElementById('cInput'));
     toast(`認識：「${txt}」`);
   };
-
   rec.onerror = err => {
-    if (err.error === 'aborted') return; // 正常終了は無視
+    if (err.error === 'aborted') return;
     toast('音声認識エラー：' + err.error);
     document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
     S._askRec = null;
   };
-
   rec.onend = () => {
     document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
     S._askRec = null;
   };
-
   try {
     rec.start();
     S._askRec = rec;
@@ -985,7 +935,7 @@ function askBtnUp(e) {
   document.getElementById('aiAskBtn').textContent = '🎙️ AI先生に質問';
 }
 
-// ===== 話して質問ボタン（クリックで音声入力）=====
+// ===== 話して質問ボタン =====
 function startVoiceInput() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { toast('音声認識非対応のブラウザです'); return; }
@@ -1000,7 +950,8 @@ function startVoiceInput() {
   rec.start();
   toast('話してください…');
 }
-  function setMic(state, msg) { /* 表示不要なら空でOK */ }
+
+function setMic(state, msg) {}
 function showInd(msg) {
   const el = document.getElementById('sind');
   document.getElementById('sindTxt').textContent = msg;
